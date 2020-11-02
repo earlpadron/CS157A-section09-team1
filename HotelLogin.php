@@ -69,7 +69,7 @@ if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['logi
 			if (($username == $uname) && ($password == $pword))
 			{
 				session_start();
-				header('location: http://localhost:8080/CS157A/ProjectReview1.jsp');
+				header('location: http://localhost:8080/CS157A/HotelHomepage.jsp');
 			}
 		}
 		die ("Incorrect username or password.<br>");
