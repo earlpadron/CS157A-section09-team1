@@ -38,7 +38,6 @@
   <div class="p2Div">
     <i class='far fa-building' style='font-size:36px'>Hotel Management System</i>
     </div>
-    <button class="button b1">Account</button>
     <br>
     <div class="center">
     <p1>List of Rooms: </p1>
@@ -59,8 +58,9 @@
       		<thead>
       			<tr>
         			<td>Room Number</td>
-        			<td>Room Category</td>
+        			<td>Room Type</td>
         			<td>Room Availability</td>
+        			<td>Room Price</td>
    				</tr>
             </thead>
             <tbody>
@@ -69,8 +69,9 @@
             	%>
             	<tr>
             		<td><%=rs.getInt("roomNumber") %></td> 
-            		<td><%=rs.getString("roomCatagory") %></td>
+            		<td><%=rs.getString("roomType") %></td>
             		<td><%=rs.getString("availability") %></td>
+            		<td><%=rs.getInt("price") %></td>
             	</tr>
             	<%}%>
             	</tbody>
