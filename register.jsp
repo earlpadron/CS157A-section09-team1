@@ -51,6 +51,19 @@
            	
            	Repeat Password <br>
            	<input type= 'text' name = 'repeatpw'> <br>
+           	
+           	Name <br>
+           	<input type= 'text' name = 'name'> <br>
+           	
+           	Phone <br>
+           	<input type= 'text' name = 'phone'> <br>
+           	
+           	Address <br>
+           	<input type= 'text' name = 'address'> <br>
+           	
+           	Email <br>
+           	<input type= 'text' name = 'email'> <br>
+           	
            	<br>
            	<input type = 'submit' value = 'Register' name = 'registerButton'> <br>
            	<br>
