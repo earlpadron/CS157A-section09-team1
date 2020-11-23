@@ -55,18 +55,30 @@ public class hotelLogin extends HttpServlet {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);
             
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.account");
+            ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.accounts");
             
-            while (rs.next()) {
+            while (rs.next()) 
+            {
             	if (username.equals(rs.getString("username")))
             	{
             		if (upassword.equals(rs.getString("password")))
             		{
-            			getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);
-            			conn.close();
+            			String accType = rs.getString("PermissionType");
+            			if (accType.equals("guest"))
+            			{
+            				getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);
+                			conn.close();
+            			}
+            			
+            			if (accType.equals("authorized"))
+            			{
+            				getServletContext().getRequestDispatcher("/HotelEmployeeHomepage.jsp").forward(request, response);
+                			conn.close();
+            			}	
             		}
             	}
             }       
+            
         } catch (SQLException ex) {
             message = "ERROR: " + ex.getMessage();
             ex.printStackTrace();
