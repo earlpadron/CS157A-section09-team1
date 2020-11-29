@@ -47,13 +47,14 @@
           user = "root";
         String password = "brian";
         try {
+        	String username = request.getParameter("username");
+        	request.getSession().setAttribute("username", username);
             java.sql.Connection con;
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password); //change cs157a to db name
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM proj1test.rooms"); //change to schema name.table name
             %>
-            
             <table>
       		<thead>
       			<tr>
@@ -76,6 +77,7 @@
             	<%}%>
             	</tbody>
             </table><br>
+            <a href="reservation.jsp"><button>Make a Reservation</button></a>
             <%
         		rs.close();
                 stmt.close();
