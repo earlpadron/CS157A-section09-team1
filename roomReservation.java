@@ -50,7 +50,7 @@ public class roomReservation extends HttpServlet {
         String password = "brian";
 		
         // get username and password input from login.jsp
-        String roomNumber = request.getParameter("reserveRoom");
+        int roomNumber = Integer.parseInt(request.getParameter("reserveRoom"));
         String username = (String)request.getSession().getAttribute("username");
         int accID = (int) request.getSession().getAttribute("accountID");  
         String d = request.getParameter("days");
@@ -65,23 +65,15 @@ public class roomReservation extends HttpServlet {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);
             
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.rooms WHERE 'roomNumber' = '" + roomNumber + "'");
+            ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.rooms WHERE roomNumber = '" + roomNumber + "'");
             
             String rType = "";
-            while (rs.next())
-            {
-            	rType = rs.getString("roomType");
-            }
-            
             String rAv = "";
-            while (rs.next())
-            {
-            	rAv = rs.getString("availability");
-            }
-            
             int rP = 0;
             while (rs.next())
             {
+            	rType = rs.getString("roomType");
+            	rAv = rs.getString("availability");
             	rP = rs.getInt("price");
             }
         	
@@ -113,6 +105,13 @@ public class roomReservation extends HttpServlet {
             	rID = rs.getInt("reservationID");
             }
             
+            sql = "INSERT INTO proj1test.catalogs (reservationID, roomNumber) values (?, ?)";
+            pstatement = conn.prepareStatement(sql);
+            pstatement.setInt(1, rID);
+            pstatement.setInt(2, roomNumber);
+            
+            row = pstatement.executeUpdate();
+            
             sql = "INSERT INTO proj1test.books (registeredID, reservationID) values (?, ?)";
             pstatement = conn.prepareStatement(sql);
             pstatement.setInt(1, accID);
@@ -120,10 +119,12 @@ public class roomReservation extends HttpServlet {
             
             row = pstatement.executeUpdate();
             
-            sql = "INSERT INTO proj1test.invoices (payment, date) values (?, ?)";
+            int total = (15*days) + rP;
+            sql = "INSERT INTO proj1test.invoices (amount, payment, date) values (?, ?, ?)";
             pstatement = conn.prepareStatement(sql);
-            pstatement.setString(1, "unpaid");
-            pstatement.setDate(2, inDate);
+            pstatement.setInt(1, total);
+            pstatement.setString(2, "unpaid");
+            pstatement.setDate(3, inDate);
             
             row = pstatement.executeUpdate();
             
