@@ -21,6 +21,9 @@
   	-ms-transform: translate(-50%, -50%);
   	transform: translate(-50%, -50%);
   }
+  .bcenter{
+  	text-align: center;
+  }
   table{border: 1px solid black;
   }
   td{border: 1px solid black;
@@ -65,11 +68,9 @@
            	<input type= 'text' name = 'email'> <br>
            	
            	<br>
-           	<input type = 'submit' value = 'Register' name = 'registerButton'> <br>
+           	<div class="bcenter"><input type = 'submit' value = 'Register' name = 'registerButton'> </div><br>
            	<br>
-            <a href="login.jsp">Back</a> 
-            </form>
-            
-            </div>
+           	</form>
+            <div class="bcenter"><a href="login.jsp"><button>Back</button></a> </div> </div>
   </body>
 </html>
