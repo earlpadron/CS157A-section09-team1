@@ -93,8 +93,8 @@
             <br>
             Days: <input type = "text" name = "days"> <input type = "submit" value = "Reserve">
             <br>
-            <div class="bcenter"><a href="HotelHomepage.jsp"><button>Back</button></a></div>
             </form>
+            <div class="bcenter"><a href="HotelHomepage.jsp"><button>Back</button></a></div>
             <%
         		rs.close();
                 stmt.close();
