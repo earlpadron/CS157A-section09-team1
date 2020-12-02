@@ -114,6 +114,9 @@ public class hotelRegister extends HttpServlet {
             
             row = statement.executeUpdate();
             
+            getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+			conn.close();
+            
         } catch (SQLException ex) {
             message = "ERROR: " + ex.getMessage();
             ex.printStackTrace();
