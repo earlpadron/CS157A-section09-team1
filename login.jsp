@@ -65,11 +65,9 @@
            	
            	<br>
            	<div class="bcenter"><input type = 'submit' value = 'Login' name = 'loginButton'> <br>
-           	<br>
-            <a href="register.jsp"><button>Register</button></a> 
-            </div>
-            </form>
-            
+           	<br></div>
+           	</form>
+            <div class="bcenter"><a href="register.jsp"><button>Register</button></a></div> 
             <%
             	stmt.close();
                 con.close();
