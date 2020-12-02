@@ -92,8 +92,8 @@
             </select>
             <input type = "submit" value = "Set availability">
             <br>
-            <div class="bcenter"><a href="HotelEmployeeHomepage.jsp"><button>Back</button></a></div>
             </form>
+            <div class="bcenter"><a href="HotelEmployeeHomepage.jsp"><button>Back</button></a></div>
             <%
         		rs.close();
                 stmt.close();
