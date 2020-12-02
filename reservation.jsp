@@ -21,6 +21,9 @@
   	-ms-transform: translate(-50%, -50%);
   	transform: translate(-50%, -50%);
   }
+  .bcenter{
+  	text-align: center;
+  }
   table{border: 1px solid black;
   }
   td{border: 1px solid black;
@@ -38,6 +41,7 @@
   <div class="p2Div">
     <i class='far fa-building' style='font-size:36px'>Reservation</i>
     </div>
+    <a href="login.jsp"><button>Log Out</button></a>
     <br>
     <div class="center">
     <p1>List of Rooms: </p1>
@@ -88,6 +92,8 @@
             </select>
             <br>
             Days: <input type = "text" name = "days"> <input type = "submit" value = "Reserve">
+            <br>
+            <div class="bcenter"><a href="HotelHomepage.jsp"><button>Back</button></a></div>
             </form>
             <%
         		rs.close();
