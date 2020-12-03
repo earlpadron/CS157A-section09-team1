@@ -48,10 +48,10 @@ public class roomService extends HttpServlet {
         user = "root";
         String password = "root";
 		
-        int roomNumber = Integer.parseInt(request.getParameter("reserveRoom"));     
+        int roomNumber = Integer.parseInt(request.getParameter("roomNumber"));     
         int accID = (int) request.getSession().getAttribute("accountID");  
-        String req = request.getParameter("request");
-        int pr = Integer.parseInt(request.getParameter("price"));
+        String req = request.getParameter("req");
+        int pr = Integer.parseInt(request.getParameter("pr"));
       
         
         Connection conn = null; 
@@ -64,12 +64,13 @@ public class roomService extends HttpServlet {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM projecttables.roomservice");
            
-            String sql = "INSERT INTO projecttables (accountID, roomNumber, request,price) values (?,?,?,?)";
+            String sql = "INSERT INTO projecttables.roomService (accountID, roomNumber, request,price) values (?,?,?,?)";
             PreparedStatement pstatement = conn.prepareStatement(sql);
           
             pstatement.setInt(1, accID);
             pstatement.setInt(2, roomNumber);
             pstatement.setString(3, req);
+            pstatement.setInt(4, pr);
             
            int row = pstatement.executeUpdate();    
            if(row > 0)
@@ -77,7 +78,7 @@ public class roomService extends HttpServlet {
         	   message = "Request sent successfully.";
            }
                     
-            getServletContext().getRequestDispatcher("/roomService.jsp").forward(request, response);
+            getServletContext().getRequestDispatcher("/roomServiceRequest.jsp").forward(request, response);
 			conn.close();
             
         } catch (SQLException ex) {
