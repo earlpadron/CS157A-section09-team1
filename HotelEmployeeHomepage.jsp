@@ -39,7 +39,7 @@
     </head>
   <body>
   <div class="p2Div">
-    <i class='far fa-building' style='font-size:36px'>Hotel Management System</i>
+    <i class='far fa-building' style='font-size:36px'>Employee Homepage</i>
     </div>
     <br>
     <a href="login.jsp"><button>Log Out</button></a>
@@ -87,7 +87,7 @@
             		<td><%=rs.getInt("roomNumber") %></td> 
             		<td><%=rs.getString("roomType") %></td>
             		<td><%=rs.getString("availability") %></td>
-            		<td><%=rs.getInt("price") %></td>
+            		<td>$<%=rs.getInt("price") %></td>
             	</tr>
             	<%}%>
             	</tbody>
@@ -96,7 +96,7 @@
             <br>
             <div class="bcenter"><a href="processPayments.jsp"><button>Process Payments</button></a></div>
             <br>
-            <div class="bcenter"><a href="reservation.jsp"><button>Manage Accounts</button></a></div>
+            <div class="bcenter"><a href="authorizeAccounts.jsp"><button>Authorize Accounts</button></a></div>
             
             <%
         		rs.close();
