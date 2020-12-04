@@ -17,16 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class roomReservation
+ * Servlet implementation class roomService
  */
-@WebServlet("/roomReservation")
-public class roomReservation extends HttpServlet {
+@WebServlet("/roomService")
+public class roomService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public roomReservation() {
+    public roomService() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -50,12 +50,30 @@ public class roomReservation extends HttpServlet {
         String password = "brian";
 		
         // get username and password input from login.jsp
-        int roomNumber = Integer.parseInt(request.getParameter("reserveRoom"));
+        String rsReq = request.getParameter("request");
         String username = (String)request.getSession().getAttribute("username");
         int accID = (int) request.getSession().getAttribute("accountID");  
-        String d = request.getParameter("days");
-        int days = Integer.parseInt(d);
-        Long dInMS = Long.valueOf(days*24*60*60*1000);
+        int price = 0;
+        if (rsReq.equals("Breakfast"))
+        {
+        	price = 10;
+        }
+        if (rsReq.equals("Brunch"))
+        {
+        	price = 12;
+        }
+        if (rsReq.equals("Lunch"))
+        {
+        	price = 20;
+        }
+        if (rsReq.equals("Dinner"))
+        {
+        	price = 35;
+        }
+        if (rsReq.equals("Snack"))
+        {
+        	price = 7;
+        }
         
         Connection conn = null; 
         String message = null;  // error message
@@ -64,83 +82,54 @@ public class roomReservation extends HttpServlet {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);
             
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.rooms WHERE roomNumber = '" + roomNumber + "'");
-            
-            String rType = "";
-            String rAv = "";
-            int rP = 0;
-            while (rs.next())
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM proj1test.books WHERE registeredID = '" + accID + "'");
+            int resID = 0;
+            while(rs.next())
             {
-            	rType = rs.getString("roomType");
-            	rAv = rs.getString("availability");
-            	rP = rs.getInt("price");
+            	resID = rs.getInt("reservationID");
             }
-        	
-        	String sql = "UPDATE proj1test.rooms SET availability=? WHERE roomNumber = " + roomNumber;
+            
+            rs = stmt.executeQuery("SELECT * FROM proj1test.transaction WHERE reservationID = '" + resID + "'");
+            int invID = 0;
+            while(rs.next())
+            {
+            	invID = rs.getInt("invoiceID");
+            }
+            
+            rs = stmt.executeQuery("SELECT * FROM proj1test.invoices WHERE invoiceID = '" + invID + "'");
+            int current = 0;
+            while(rs.next())
+            {
+            	current = rs.getInt("amount");
+            }
+            int total = price + current;
+        	String sql = "UPDATE proj1test.invoices SET amount=? WHERE invoiceID = " + invID;
             PreparedStatement pstatement = conn.prepareStatement(sql);
-            pstatement.setString(1, "reserved");
+            pstatement.setInt(1, total);
             int row = pstatement.executeUpdate();
             if (row > 0)
             {
             	System.out.println("Update successful.");
             }
-            
-            sql = "INSERT INTO proj1test.reservations (checkIn, checkOut) values (?, ?)";
-            Timestamp in = new Timestamp(System.currentTimeMillis());
-            Timestamp out = new Timestamp(in.getTime() + dInMS);
-            java.sql.Date inDate = new java.sql.Date(in.getTime());
-            java.sql.Date outDate = new java.sql.Date(out.getTime());
+            sql = "UPDATE proj1test.invoices SET payment=? WHERE invoiceID = " + invID;
             pstatement = conn.prepareStatement(sql);
-            pstatement.setDate(1, inDate);
-            pstatement.setDate(2, outDate);
-            
+            pstatement.setString(1, "unpaid");
             row = pstatement.executeUpdate();
             
-            rs = statement.executeQuery("SELECT max(reservationID) as reservationID FROM proj1test.reservations");
-            int rID = 0;
-            
-            while (rs.next())
+            rs = stmt.executeQuery("SELECT * FROM proj1test.catalogs WHERE reservationID = '" + resID + "'");
+            int room = 0;
+            while(rs.next())
             {
-            	rID = rs.getInt("reservationID");
-            }
+            	room = rs.getInt("roomNumber");
+            }            
             
-            sql = "INSERT INTO proj1test.catalogs (reservationID, roomNumber) values (?, ?)";
+            sql = "INSERT INTO proj1test.roomservice (accountID, roomNumber, request, price) VALUES(?, ?, ?, ?)";
             pstatement = conn.prepareStatement(sql);
-            pstatement.setInt(1, rID);
-            pstatement.setInt(2, roomNumber);
-            
-            row = pstatement.executeUpdate();
-            
-            sql = "INSERT INTO proj1test.books (registeredID, reservationID) values (?, ?)";
-            pstatement = conn.prepareStatement(sql);
-            pstatement.setInt(1, accID);
-            pstatement.setInt(2, rID);
-            
-            row = pstatement.executeUpdate();
-            
-            int total = (15*days) + rP;
-            sql = "INSERT INTO proj1test.invoices (amount, payment, date) values (?, ?, ?)";
-            pstatement = conn.prepareStatement(sql);
-            pstatement.setInt(1, total);
-            pstatement.setString(2, "unpaid");
-            pstatement.setDate(3, inDate);
-            
-            row = pstatement.executeUpdate();
-            
-            int invoice = 0;
-            rs = statement.executeQuery("SELECT max(invoiceID) as invoiceID FROM proj1test.invoices");
-            
-            while (rs.next()) 
-            {
-            	invoice = rs.getInt("invoiceID");
-            }
-            
-            sql = "INSERT INTO proj1test.transaction (invoiceID, reservationID) values (?, ?)";
-            pstatement = conn.prepareStatement(sql);
-            pstatement.setInt(1, invoice);
-            pstatement.setInt(2, rID);
-            
+            pstatement.setString(1, Integer.toString(accID));
+            pstatement.setInt(2, room);
+            pstatement.setString(3, rsReq);
+            pstatement.setInt(4, price);
             row = pstatement.executeUpdate();
             
             getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);

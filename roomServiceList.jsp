@@ -34,49 +34,74 @@
   }
   
   </style>
-    <title>Guest Homepage</title>
+    <title>Room Service</title>
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     </head>
   <body>
   <div class="p2Div">
-    <i class='far fa-building' style='font-size:36px'>Guest Homepage</i>
+    <i class='far fa-building' style='font-size:36px'>Room Service</i>
     </div>
     <br>
     <a href="login.jsp"><button>Log Out</button></a>
     <div class="center">
+    <p1>Room Service Menu: </p1>
     <% 
      String db = "cs157a"; //change to db name
         String user; // assumes database name is the same as username
           user = "root";
         String password = "brian";
         try {
-        	String username = request.getParameter("username");
-        	if (username == null)
-        	{
-        		username = (String)request.getSession().getAttribute("username");
-        	}
-        	request.getSession().setAttribute("username", username);
+        	String username = (String)request.getSession().getAttribute("username");
             java.sql.Connection con;
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password); //change cs157a to db name
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM proj1test.accounts WHERE username = '" + username + "'");
-            int accID = 0;
-            while (rs.next())
-            {
-            	accID = rs.getInt("AccountID");
-            }
-            request.getSession().setAttribute("accountID", accID);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM proj1test.roomservice;");
+            int accID = (int) request.getSession().getAttribute("accountID");
             %>
-            <br>
-            <div class="bcenter"><a href="viewAccount.jsp"><button>Account Information</button></a></div>
-            <br>
-            <div class="bcenter"><a href="viewReservation.jsp"><button>View Reservation</button></a></div>
-            <br>
-            <div class="bcenter"><a href="roomServiceList.jsp"><button>Request Room Service</button></a></div>
-            <br>
-            <div class="bcenter"><a href="reservation.jsp"><button>Make a Reservation</button></a></div>
+            <form method='post' action ='roomService' >
+            <table>
+      		<thead>
+      			<tr>
+        			<td>Request</td>
+        			<td>Price</td>
+   				</tr>
+            </thead>
+            <tbody>
+            	<tr>
+            		<td>Breakfast</td>          
+            		<td>$10</td>
+            	</tr>
+            	<tr>
+            		<td>Brunch</td>          
+            		<td>$12</td>
+            	</tr>
+            	<tr>
+            		<td>Lunch</td>          
+            		<td>$20</td>
+            	</tr>
+            	<tr>
+            		<td>Dinner</td>          
+            		<td>$35</td>
+            	</tr>
+            	<tr>
+            		<td>Snack</td>          
+            		<td>$7</td>
+            	</tr>
+            	</tbody>
+            </table><br>
+            <select name = "request">
+            <option>Breakfast</option>
+            <option>Brunch</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+            <option>Snack</option>
+            </select>
             
+          	<input type = "submit" value = "Request">
+            <br>
+           </form>
+            <div class="bcenter"><a href="HotelHomepage.jsp"><button>Back</button></a></div>
             <%
         		rs.close();
                 stmt.close();

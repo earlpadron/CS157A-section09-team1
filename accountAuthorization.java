@@ -1,32 +1,26 @@
-
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.sql.*;
 /**
- * Servlet implementation class roomManagement
+ * Servlet implementation class accountAuthorization
  */
-@WebServlet("/roomManagement")
-public class roomManagement extends HttpServlet {
+@WebServlet("/accountAuthorization")
+public class accountAuthorization extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public roomManagement() {
+    public accountAuthorization() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -50,35 +44,48 @@ public class roomManagement extends HttpServlet {
         String password = "brian";
 		
         // get username and password input from login.jsp
-        String roomNumber = request.getParameter("reserveRoom");
-        String username = (String)request.getSession().getAttribute("username");
-        int accID = (int) request.getSession().getAttribute("accountID");  
-        
+        String username = request.getParameter("username");
+        int accID = (int) request.getSession().getAttribute("accountID");
+          
         Connection conn = null; 
         String message = null;  // error message
          
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);
-            
-        	String sql = "UPDATE proj1test.rooms SET availability=? WHERE roomNumber = " + roomNumber;
-            PreparedStatement pstatement = conn.prepareStatement(sql);
-            pstatement.setString(1, "available");
-            int row = pstatement.executeUpdate();
-            if (row > 0)
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);  
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.accounts WHERE username = '"+ username + "'");
+            int userAccount = 0;
+            while (rs.next()) 
             {
-            	System.out.println("Update successful.");
+            	userAccount = rs.getInt("AccountID");
             }
-           
-            getServletContext().getRequestDispatcher("/manageRooms.jsp").forward(request, response);
+            String sql = "UPDATE proj1test.accounts SET PermissionType=? WHERE AccountID = " + userAccount;
+            PreparedStatement pstatement = conn.prepareStatement(sql);
+            pstatement.setString(1, "authorized");
+            int row = pstatement.executeUpdate();
+            
+            sql = "INSERT INTO proj1test.manages (authorizedAccountID, registeredAccountID) values (?, ?)";
+            pstatement = conn.prepareStatement(sql);
+            pstatement.setInt(1, accID);
+            pstatement.setInt(2, userAccount);
+            row = pstatement.executeUpdate();
+            
+            sql = "INSERT INTO proj1test.authorized (AccountID) values (?)";
+            pstatement = conn.prepareStatement(sql);
+            pstatement.setInt(1, userAccount);
+            row = pstatement.executeUpdate();
+            
+            getServletContext().getRequestDispatcher("/HotelEmployeeHomepage.jsp").forward(request, response);
 			conn.close();
+            
             
         } catch (SQLException ex) {
             message = "ERROR: " + ex.getMessage();
             ex.printStackTrace();
         } finally {
             if (conn != null) {
-                
+                message = "Incorrect username or password.";
             	try {
                     conn.close();
                 } catch (SQLException ex) {
@@ -93,4 +100,3 @@ public class roomManagement extends HttpServlet {
         }
     }
 }
-

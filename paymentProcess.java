@@ -17,16 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class roomManagement
+ * Servlet implementation class paymentProcess
  */
-@WebServlet("/roomManagement")
-public class roomManagement extends HttpServlet {
+@WebServlet("/paymentProcess")
+public class paymentProcess extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public roomManagement() {
+    public paymentProcess() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -50,7 +50,7 @@ public class roomManagement extends HttpServlet {
         String password = "brian";
 		
         // get username and password input from login.jsp
-        String roomNumber = request.getParameter("reserveRoom");
+        int invoice = Integer.parseInt(request.getParameter("invoice"));
         String username = (String)request.getSession().getAttribute("username");
         int accID = (int) request.getSession().getAttribute("accountID");  
         
@@ -61,16 +61,36 @@ public class roomManagement extends HttpServlet {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);
             
-        	String sql = "UPDATE proj1test.rooms SET availability=? WHERE roomNumber = " + roomNumber;
+        	String sql = "UPDATE proj1test.invoices SET payment=? WHERE invoiceID = " + invoice;
             PreparedStatement pstatement = conn.prepareStatement(sql);
-            pstatement.setString(1, "available");
+            pstatement.setString(1, "paid");
             int row = pstatement.executeUpdate();
             if (row > 0)
             {
             	System.out.println("Update successful.");
             }
-           
-            getServletContext().getRequestDispatcher("/manageRooms.jsp").forward(request, response);
+            
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM proj1test.invoices WHERE invoiceID = '" + invoice + "'");
+            int amount = 0;
+            while(rs.next())
+            {
+            	amount = rs.getInt("amount");
+            }
+            
+            sql = "UPDATE proj1test.invoices SET amount = ? WHERE invoiceID = " + invoice;
+            pstatement = conn.prepareStatement(sql);
+            pstatement.setInt(1, 0);
+            row = pstatement.executeUpdate();
+            
+            sql = "INSERT INTO proj1test.processpayment (accountID, invoiceID, amount) VALUES(?, ?, ?)";
+            pstatement = conn.prepareStatement(sql);
+            pstatement.setInt(1, accID);
+            pstatement.setInt(2, invoice);
+            pstatement.setInt(3, amount);
+            row = pstatement.executeUpdate();
+            
+            getServletContext().getRequestDispatcher("/processPayments.jsp").forward(request, response);
 			conn.close();
             
         } catch (SQLException ex) {

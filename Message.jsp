@@ -9,6 +9,7 @@
 <body>
 	<center>
 		<h3><%=request.getAttribute("Message") %></h3>
+		<a href= "login.jsp"><button>Return to Login</button></a>
 	</center>
 </body>
 </html>

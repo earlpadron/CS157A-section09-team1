@@ -17,16 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class roomManagement
+ * Servlet implementation class reservationDeletion
  */
-@WebServlet("/roomManagement")
-public class roomManagement extends HttpServlet {
+@WebServlet("/reservationDeletion")
+public class reservationDeletion extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public roomManagement() {
+    public reservationDeletion() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -50,18 +50,29 @@ public class roomManagement extends HttpServlet {
         String password = "brian";
 		
         // get username and password input from login.jsp
-        String roomNumber = request.getParameter("reserveRoom");
+        String delval = request.getParameter("Delete");
         String username = (String)request.getSession().getAttribute("username");
         int accID = (int) request.getSession().getAttribute("accountID");  
         
         Connection conn = null; 
         String message = null;  // error message
-         
-        try {
+        
+        if (delval != null)
+        {
+        	if (delval.equals("Delete"))
+        	{
+        	try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);
             
-        	String sql = "UPDATE proj1test.rooms SET availability=? WHERE roomNumber = " + roomNumber;
+            int resID = (int)request.getSession().getAttribute("resID");
+            int room = (int)request.getSession().getAttribute("rmNum");
+            int invID = (int)request.getSession().getAttribute("invoiceID");
+            
+            Statement statement = conn.createStatement();
+            int del = statement.executeUpdate("DELETE FROM proj1test.catalogs WHERE reservationID = '" + resID + "'");
+            
+        	String sql = "UPDATE proj1test.rooms SET availability=? WHERE roomNumber = " + room;
             PreparedStatement pstatement = conn.prepareStatement(sql);
             pstatement.setString(1, "available");
             int row = pstatement.executeUpdate();
@@ -69,8 +80,16 @@ public class roomManagement extends HttpServlet {
             {
             	System.out.println("Update successful.");
             }
-           
-            getServletContext().getRequestDispatcher("/manageRooms.jsp").forward(request, response);
+            
+            del = statement.executeUpdate("DELETE FROM proj1test.reservations WHERE reservationID = '" + resID + "'");
+            
+            del = statement.executeUpdate("DELETE FROM proj1test.books WHERE registeredID = '" + accID + "'");
+            
+            del = statement.executeUpdate("DELETE FROM proj1test.invoices WHERE invoiceID = '" + invID + "'");
+            
+            del = statement.executeUpdate("DELETE FROM proj1test.transaction WHERE invoiceID = '" + invID + "'");
+            
+            getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);
 			conn.close();
             
         } catch (SQLException ex) {
@@ -91,6 +110,10 @@ public class roomManagement extends HttpServlet {
             // go to message page
             getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
         }
-    }
-}
+    }else
+	{
+		getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);
+    	
+	}
+}}}
 

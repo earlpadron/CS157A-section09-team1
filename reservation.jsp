@@ -39,7 +39,7 @@
     </head>
   <body>
   <div class="p2Div">
-    <i class='far fa-building' style='font-size:36px'>Reservation</i>
+    <i class='far fa-building' style='font-size:36px'>Make a Reservation</i>
     </div>
     <a href="login.jsp"><button>Log Out</button></a>
     <br>
