@@ -39,7 +39,7 @@
     </head>
   <body>
   <div class="p2Div">
-    <i class='far fa-building' style='font-size:36px'>Reservation</i>
+    <i class='far fa-building' style='font-size:36px'>View Reservation</i>
     </div>
     <br><a href="login.jsp"><button>Log Out</button></a> 
     <div class="center">
@@ -62,6 +62,7 @@
             {
             	rID = rs.getInt("reservationID");
             }
+            request.getSession().setAttribute("resID", rID);
             
             rs = stmt.executeQuery("SELECT * FROM proj1test.catalogs WHERE reservationID = '" + rID + "'");
             int room = 0;
@@ -69,6 +70,7 @@
             {
             	room = rs.getInt("roomNumber");
             }
+            request.getSession().setAttribute("rmNum", room);
             
             rs = stmt.executeQuery("SELECT * FROM proj1test.reservations WHERE reservationID = '" + rID + "'");
             Timestamp din = new Timestamp(System.currentTimeMillis());
@@ -87,6 +89,7 @@
             {
             	invID = rs.getInt("invoiceID");
             }
+            request.getSession().setAttribute("invoiceID", invID);
             
             rs = stmt.executeQuery("SELECT * FROM proj1test.invoices WHERE invoiceID = '" + invID + "'");
             int total = 0;
@@ -120,7 +123,10 @@
             	
             	</tbody>
             </table><br>
-            <div class="bcenter"><a href="HotelHomepage.jsp"><button>Back</button></a></div> 
+            <form method = "post" action ='reservationDeletion' >
+            <div class="bcenter">Type in "Delete" without " to delete your reservation.<br><input type = "text" name = "Delete"><br><input type = "submit" value = "Delete"></a></div></form>
+            <br><br>
+            <div class="bcenter"><a href="HotelHomepage.jsp"><button>Back</button></a></div>
             <%
         		rs.close();
                 stmt.close();
