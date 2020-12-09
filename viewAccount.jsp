@@ -44,7 +44,7 @@
     <br><a href="login.jsp"><button>Log Out</button></a> 
     <div class="center">
     <br><br><br>
-    <p1>Reservation Info: </p1>
+    <p1>Account Info: </p1>
     <% 
      String db = "cs157a"; //change to db name
         String user; // assumes database name is the same as username

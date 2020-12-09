@@ -54,38 +54,55 @@ public class accountAuthorization extends HttpServlet {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);  
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.accounts WHERE username = '"+ username + "'");
-            int userAccount = 0;
-            while (rs.next()) 
+            if (username != null)
             {
-            	userAccount = rs.getInt("AccountID");
+            	if (username == "")
+            	{
+            		getServletContext().getRequestDispatcher("/authorizeAccounts.jsp").forward(request, response);
+            		conn.close();
+            	}
+            
+            	else
+            	{
+            		ResultSet rs = statement.executeQuery("SELECT * FROM proj1test.accounts WHERE username = '"+ username + "'");
+            		int userAccount = 0;
+            		while (rs.next()) 
+            		{
+            			userAccount = rs.getInt("AccountID");
+            		}
+            		if (userAccount == 0)
+            		{
+            			getServletContext().getRequestDispatcher("/authorizeAccounts.jsp").forward(request, response);
+            			conn.close();
+            		}
+            		else
+            		{
+            			String sql = "UPDATE proj1test.accounts SET PermissionType=? WHERE AccountID = " + userAccount;
+            			PreparedStatement pstatement = conn.prepareStatement(sql);
+            			pstatement.setString(1, "authorized");
+            			int row = pstatement.executeUpdate();
+            		
+            			sql = "INSERT INTO proj1test.authorized (AccountID) values (?)";
+            			pstatement = conn.prepareStatement(sql);
+            			pstatement.setInt(1, userAccount);
+            			row = pstatement.executeUpdate();
+            			
+            			sql = "INSERT INTO proj1test.manages (authorizedAccountID, registeredAccountID) values (?, ?)";
+            			pstatement = conn.prepareStatement(sql);
+            			pstatement.setInt(1, accID);
+            			pstatement.setInt(2, userAccount);
+            			row = pstatement.executeUpdate();
+            
+            			getServletContext().getRequestDispatcher("/HotelEmployeeHomepage.jsp").forward(request, response);
+            			conn.close();
+            		}
+            	}
             }
-            String sql = "UPDATE proj1test.accounts SET PermissionType=? WHERE AccountID = " + userAccount;
-            PreparedStatement pstatement = conn.prepareStatement(sql);
-            pstatement.setString(1, "authorized");
-            int row = pstatement.executeUpdate();
-            
-            sql = "INSERT INTO proj1test.manages (authorizedAccountID, registeredAccountID) values (?, ?)";
-            pstatement = conn.prepareStatement(sql);
-            pstatement.setInt(1, accID);
-            pstatement.setInt(2, userAccount);
-            row = pstatement.executeUpdate();
-            
-            sql = "INSERT INTO proj1test.authorized (AccountID) values (?)";
-            pstatement = conn.prepareStatement(sql);
-            pstatement.setInt(1, userAccount);
-            row = pstatement.executeUpdate();
-            
-            getServletContext().getRequestDispatcher("/HotelEmployeeHomepage.jsp").forward(request, response);
-			conn.close();
-            
-            
         } catch (SQLException ex) {
             message = "ERROR: " + ex.getMessage();
             ex.printStackTrace();
         } finally {
             if (conn != null) {
-                message = "Incorrect username or password.";
             	try {
                     conn.close();
                 } catch (SQLException ex) {

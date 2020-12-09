@@ -52,15 +52,53 @@ public class hotelRegister extends HttpServlet {
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
         String email = request.getParameter("email");
-          
+        String message = null; 
+        if (username != null && upassword != null && name != null && address != null && phone != null && email != null) {
+        if (username == "")
+        {
+        	message = "Please fill in all fields.";
+        	request.setAttribute("Message", message);
+        	getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
+        }
+        if (username == "")
+        {
+        	message = "Please fill in all fields.";
+        	request.setAttribute("Message", message);
+        	getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
+        }
+        if (upassword == "")
+        {
+        	message = "Please fill in all fields.";
+        	request.setAttribute("Message", message);
+        	getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
+        }
+        if (name == "")
+        {
+        	message = "Please fill in all fields.";
+        	request.setAttribute("Message", message);
+        	getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
+        }
+        if (phone == "")
+        {
+        	message = "Please fill in all fields.";
+        	request.setAttribute("Message", message);
+        	getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
+        }
+        if (email == "")
+        {
+        	message = "Please fill in all fields.";
+        	request.setAttribute("Message", message);
+        	getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
+        }
+        else
+        {
         Connection conn = null; 
-        String message = null;  // error message
-         
+      
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cs157a?serverTimezone=EST5EDT",user, password);
             String sql = "INSERT INTO proj1test.accounts (username, password, PermissionType) values (?, ?, ?)";
-
+            
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, username);
             statement.setString(2, upassword);
@@ -128,7 +166,7 @@ public class hotelRegister extends HttpServlet {
                     ex.printStackTrace();
                 }
             }
-            // set message 
+            // set  
             request.setAttribute("Message", message);
              
             // go to message page
@@ -136,5 +174,6 @@ public class hotelRegister extends HttpServlet {
         }
     }
 	
-
+}
+}
 }

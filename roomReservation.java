@@ -54,6 +54,12 @@ public class roomReservation extends HttpServlet {
         String username = (String)request.getSession().getAttribute("username");
         int accID = (int) request.getSession().getAttribute("accountID");  
         String d = request.getParameter("days");
+        if (d.matches(".*[a-z].*") || d == "")
+        {
+        	getServletContext().getRequestDispatcher("/reservation.jsp").forward(request, response);
+        }
+        else
+        {
         int days = Integer.parseInt(d);
         Long dInMS = Long.valueOf(days*24*60*60*1000);
         
@@ -145,7 +151,7 @@ public class roomReservation extends HttpServlet {
             
             getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);
 			conn.close();
-            
+          
         } catch (SQLException ex) {
             message = "ERROR: " + ex.getMessage();
             ex.printStackTrace();
@@ -165,5 +171,5 @@ public class roomReservation extends HttpServlet {
             getServletContext().getRequestDispatcher("/Message.jsp").forward(request, response);
         }
     }
-}
+}}
 

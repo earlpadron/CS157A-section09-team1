@@ -89,7 +89,7 @@ public class reservationDeletion extends HttpServlet {
             
             del = statement.executeUpdate("DELETE FROM proj1test.transaction WHERE invoiceID = '" + invID + "'");
             
-            getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);
+            getServletContext().getRequestDispatcher("/viewReservation.jsp").forward(request, response);
 			conn.close();
             
         } catch (SQLException ex) {
@@ -112,7 +112,7 @@ public class reservationDeletion extends HttpServlet {
         }
     }else
 	{
-		getServletContext().getRequestDispatcher("/HotelHomepage.jsp").forward(request, response);
+		getServletContext().getRequestDispatcher("/viewReservation.jsp").forward(request, response);
     	
 	}
 }}}
